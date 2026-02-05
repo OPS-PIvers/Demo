@@ -1,0 +1,23 @@
+{
+  "name": "Google Apps Script PRO Agent",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  "onCreateCommand": "npm install -g @google/clasp@latest @google/gemini-cli@latest @types/google-apps-script",
+
+  "postCreateCommand": "mkdir -p src .gemini/commands .gemini/skills/gas-pro && echo '{\"scriptId\":\"\",\"rootDir\":\"./src\"}' > .clasp.json && echo -e '**/**\\n!src/**\\n!appsscript.json\\n.devcontainer/\\n.gemini/' > .claspignore && echo '{\"timeZone\":\"America/New_York\",\"exceptionLogging\":\"STACKDRIVER\",\"runtimeVersion\":\"V8\"}' > src/appsscript.json && printf 'description = \"Update Web App\"\nprompt = \"\"\"\n1. Run `clasp push --force`.\n2. Run `clasp deployments`.\n3. Find the ID for \"web app\".\n4. Run `clasp deploy -i <ID>`.\n\"\"\"' > .gemini/commands/deploy.toml && printf 'description = \"Auth Clasp\"\nprompt = \"\"\"\n1. Run `clasp login --no-localhost`.\n2. Copy the redirect URL and paste it here.\n3. Ask for the Script ID and run `clasp setting scriptId`.\n\"\"\"' > .gemini/commands/auth.toml && printf '---\\nname: gas-pro\\ndescription: Expertise in GAS V8, Manifests, and JSDoc\\n---\\n- Always use V8 syntax.\\n- Audit Scopes: Compare `src/*.gs` logic against `appsscript.json` oauthScopes.\\n- Auto-Doc: When asked to document code, generate JSDoc using @param {type} name and @return {type}. For spreadsheet functions, include @customfunction.' > .gemini/skills/gas-pro/SKILL.md && printf '# 🚀 Pro Agent Start\\n1. Run `gemini`\\n2. Type `/auth` to login.\\n3. Ask me to \"Audit my scopes\" or \"Document my functions\" anytime.' > GUIDE.md && code GUIDE.md",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.associations": { "*.gs": "javascript" },
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      },
+      "extensions": [
+        "googlecloudtools.gemini-code-assist-plugin",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}
