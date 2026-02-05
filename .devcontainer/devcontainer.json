@@ -1,19 +1,45 @@
 {
-  "name": "GAS + Gemini Ultimate Pro Agent",
+  "name": "GAS + Gemini Pro (Advanced Layout)",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
 
   "onCreateCommand": "npm install -g @google/clasp@latest @google/gemini-cli@latest @types/google-apps-script",
 
-  "postCreateCommand": "bash -c 'mkdir -p src .gemini/commands .gemini/skills/gas-pro && echo \"{\\\"scriptId\\\":\\\"\\\",\\\"rootDir\\\":\\\"./src\\\"}\" > .clasp.json && echo -e \"**/**\\n!src/**\\n!appsscript.json\\n.devcontainer/\\n.gemini/\" > .claspignore && echo \"{\\\"timeZone\\\":\\\"America/New_York\\\",\\\"exceptionLogging\\\":\\\"STACKDRIVER\\\",\\\"runtimeVersion\\\":\\\"V8\\\"}\" > src/appsscript.json && cat <<EOF > .gemini/commands/deploy.toml\ndescription = \"Update Web App\"\nprompt = \"\"\"\n1. Run clasp push --force.\n2. Run clasp deployments.\n3. Find the ID for web app.\n4. Run clasp deploy -i <ID>.\n\"\"\"\nEOF\ncat <<EOF > .gemini/skills/gas-pro/SKILL.md\n---\nname: gas-pro\ndescription: Expertise in GAS V8 and Troubleshooting\n---\n- Troubleshoot: If clasp push fails, check https://script.google.com/home/usersettings and enable \"Google Apps Script API\".\n- Auto-Doc: Generate JSDoc headers for .gs functions when asked.\nEOF\ncat <<EOF > GEMINI.md\n# Project Context\n- Code is in /src. Manifest is at /src/appsscript.json.\n- Deployment: Use /deploy to update production.\nEOF\necho -e \"# 🚀 Pro Setup Guide\\n\\n### 1. The Clasp Auth (Standard Terminal)\\nDo NOT run this inside the gemini prompt. Use the regular bash terminal:\\n- Run: \\`clasp login --no-localhost\\`\\n- **Copying the URL:** In Codespaces, hold **Shift** while you highlight the URL with your mouse. Then right-click to copy.\\n- Paste into browser, hit Allow, and copy the final \"broken\" URL back here.\\n\\n### 2. The Gemini Auth\\n- Run: \\`gemini\\`\\n- Follow the prompts to sync your Pro subscription.\\n\\n### 3. Final Step\\n- Enable the API: https://script.google.com/home/usersettings\" > GUIDE.md && code GUIDE.md'",
+  "postCreateCommand": "bash -c 'mkdir -p src .gemini/commands .gemini/skills/gas-pro && echo \"{\\\"scriptId\\\":\\\"\\\",\\\"rootDir\\\":\\\"./src\\\"}\" > .clasp.json && echo -e \"**/**\\n!src/**\\n!appsscript.json\\n.devcontainer/\\n.gemini/\" > .claspignore && echo \"{\\\"timeZone\\\":\\\"America/New_York\\\",\\\"exceptionLogging\\\":\\\"STACKDRIVER\\\",\\\"runtimeVersion\\\":\\\"V8\\\"}\" > src/appsscript.json && cat <<EOF > .gemini/commands/deploy.toml\ndescription = \"Update Web App\"\nprompt = \"\"\"\n1. Run clasp push --force.\n2. Run clasp deployments.\n3. Find the ID for web app.\n4. Run clasp deploy -i <ID>.\n\"\"\"\nEOF\ncat <<EOF > .gemini/skills/gas-pro/SKILL.md\n---\nname: gas-pro\ndescription: Expertise in GAS V8 and Troubleshooting\n---\n- Troubleshooting: If clasp push fails, check https://script.google.com/home/usersettings and enable \"Google Apps Script API\".\n- Auto-Doc: Generate JSDoc headers for .gs functions when asked.\nEOF\ncat <<EOF > GEMINI.md\n# Project Context\n- Code is in /src. Manifest is at /src/appsscript.json.\n- Actions: Use /deploy to update production.\nEOF\necho -e \"# 🚀 Pro Setup Guide\\n\\n### 1. Dual Terminal Layout\\n- The terminal in the **Editor Area** (this window) is for the \\`gemini\\` agent.\\n- The terminal in the **Bottom Panel** is for \\`clasp\\` commands.\\n\\n### 2. Authentication\\n- **Clasp:** In the bottom terminal, run \\`clasp login --no-localhost\\`.\\n- **Gemini:** In this editor terminal, run \\`gemini\\`.\\n\\n### 3. Permissions\\nEnsure the GAS API is enabled: https://script.google.com/home/usersettings\" > GUIDE.md && code GUIDE.md'",
 
   "customizations": {
     "vscode": {
       "settings": {
         "editor.formatOnSave": true,
-        "files.associations": { "*.gs": "javascript" }
+        "files.associations": { "*.gs": "javascript" },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // Hides the Gemini side panel and other sidebars by default
+        "workbench.activityBar.visible": true,
+        "workbench.sideBar.location": "left",
+        "google.gemini.chat.visible": false,
+        "workbench.view.extension.google-cloud-tools-gemini-code-assist-plugin.visible": false
       },
-      "extensions": ["googlecloudtools.gemini-code-assist-plugin", "dbaeumer.vscode-eslint"]
+      "extensions": [
+        "googlecloudtools.gemini-code-assist-plugin",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
     }
   },
+
+  // This creates the terminals on startup
+  "tasks": [
+    {
+      "label": "Open Editor Terminal",
+      "type": "shell",
+      "command": "echo 'Welcome! Use this terminal for the Gemini Agent.'",
+      "runOptions": { "runOn": "folderOpen" },
+      "presentation": {
+        "group": "editor-terminals",
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ],
+
   "remoteUser": "node"
 }
